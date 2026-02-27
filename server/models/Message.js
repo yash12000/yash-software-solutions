@@ -1,10 +1,14 @@
 import mongoose from "mongoose";
 
-const messageSchema = new mongoose.Schema({
-  sender: String,
-  receiver: String,
-  text: String,
-  createdAt: { type: Date, default: Date.now }
-});
+const messageSchema = new mongoose.Schema(
+  {
+    text: String,
+    sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  },
+  { timestamps: true }
+);
 
 export default mongoose.model("Message", messageSchema);

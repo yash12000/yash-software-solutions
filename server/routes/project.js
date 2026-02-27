@@ -2,19 +2,18 @@ import express from "express";
 import {
   createProject,
   getProjects,
-  updateProject,
   assignEmployee,
-  requestService
+  updateProject,
+  requestService,
 } from "../controllers/projectController.js";
-import { verifyToken } from "../middleware/authMiddleware.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.put("/assign", verifyToken, assignEmployee);
-router.post("/request", verifyToken, requestService);
-
-router.post("/", verifyToken, createProject);
-router.get("/", verifyToken, getProjects);
-router.put("/:id", verifyToken, updateProject);
+router.get("/", protect, getProjects);
+router.post("/", protect, createProject);
+router.put("/assign", protect, assignEmployee);
+router.put("/:id", protect, updateProject);
+router.post("/request", protect, requestService);
 
 export default router;
