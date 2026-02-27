@@ -15,10 +15,15 @@ app.use(
   cors({
     origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 app.use(express.json());
+
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
