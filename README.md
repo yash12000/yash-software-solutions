@@ -12,8 +12,8 @@ This application allows Admins, Employees, and Clients to manage projects, commu
 
 ## 🌐 Live Links
 
-Frontend: https://your-vercel-link  
-Backend: https://your-render-link  
+Frontend: https://yash-software-solutions.vercel.app/ 
+Backend: https://yash-software-solutions.onrender.com 
 
 ---
 
@@ -148,7 +148,6 @@ Email: client@test.com
 Password: 123456  
 
 ---
-
 ## 📸 Screenshots
 
 ### 🔐 Login Page
