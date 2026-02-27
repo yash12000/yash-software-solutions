@@ -22,36 +22,33 @@ export default function Dashboard() {
   const createProject = async () => {
     await API.post("/projects", {
       name: "New Project",
-      description: "Created by Admin"
+      description: "Created by Admin",
     });
     fetchProjects();
   };
 
   const assignEmployee = async (projectId) => {
-  const employeeId = prompt("Enter Employee ID");
+    const employeeId = prompt("Enter Employee ID");
+    if (!employeeId) return;
 
-  if (!employeeId) return;
+    try {
+      await API.put("/projects/assign", {
+        projectId,
+        employeeId,
+      });
 
-  try {
-    await API.put("/projects/assign", {
-      projectId,
-      employeeId
-    });
-
-    alert("Employee Assigned Successfully");
-
-    fetchProjects();
-  } catch (err) {
-    console.log(err);
-  }
-};
+      alert("Employee Assigned Successfully ✅");
+      fetchProjects();
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const requestService = async () => {
     await API.post("/projects/request", {
       name: "Client Request",
-      description: "Requested by client"
+      description: "Requested by client",
     });
-
     fetchProjects();
   };
 
@@ -81,71 +78,100 @@ export default function Dashboard() {
 
   return (
     <MainLayout>
-      <h1 className="text-2xl font-bold mb-4">
+      <h1 className="text-3xl font-bold mb-6">
         {user.role.toUpperCase()} DASHBOARD
       </h1>
 
-      {user.role === "admin" && (
-        <button
-          onClick={createProject}
-          className="bg-blue-600 text-white px-4 py-2 mb-4"
-        >
-          Create Project
-        </button>
-      )}
+      <div className="mb-6 flex gap-3">
+        {user.role === "admin" && (
+          <button
+            onClick={createProject}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow"
+          >
+            + Create Project
+          </button>
+        )}
 
-      {user.role === "client" && (
-        <button
-          onClick={requestService}
-          className="bg-purple-600 text-white px-4 py-2 mb-4"
-        >
-          Request Service
-        </button>
-      )}
+        {user.role === "client" && (
+          <button
+            onClick={requestService}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg shadow"
+          >
+            Request Service
+          </button>
+        )}
+      </div>
 
       {filteredProjects.length === 0 ? (
-        <p>No projects found</p>
+        <p className="text-gray-500">No projects found</p>
       ) : (
-        filteredProjects.map((p) => (
-          <div key={p._id} className="bg-white p-4 mb-3 shadow rounded">
-            <h2 className="font-bold">{p.name}</h2>
-            <p>{p.description}</p>
-            <p>Status: {p.status}</p>
+        <div className="grid md:grid-cols-2 gap-6">
+          {filteredProjects.map((p) => (
+            <div
+              key={p._id}
+              className="bg-white p-5 rounded-xl shadow hover:shadow-lg transition"
+            >
+              <h2 className="text-xl font-semibold">{p.name}</h2>
 
-            {user.role === "admin" && (
-              <>
-                <button
-                  onClick={() => assignEmployee(p._id)}
-                  className="bg-green-500 text-white px-2 py-1 mt-2 mr-2"
-                >
-                  Assign Employee
-                </button>
+              <p className="text-gray-500 mt-1">{p.description}</p>
 
-                {p.status === "Pending Approval" && (
-                  <button
-                    onClick={() => approveProject(p._id)}
-                    className="bg-blue-500 text-white px-2 py-1 mt-2"
-                  >
-                    Approve
-                  </button>
+              <p className="mt-2 text-sm">
+                <span className="font-semibold">Status:</span>{" "}
+                <span className="text-yellow-600">{p.status}</span>
+              </p>
+
+              <div className="mt-3">
+                <p className="font-semibold text-sm">Employees:</p>
+                {p.employees?.length > 0 ? (
+                  p.employees.map((emp) => (
+                    <p key={emp._id} className="text-gray-600 text-sm">
+                      • {emp.name}
+                    </p>
+                  ))
+                ) : (
+                  <p className="text-gray-400 text-sm">
+                    No employees assigned
+                  </p>
                 )}
-              </>
-            )}
+              </div>
 
-            {user.role === "employee" && (
-              <select
-                className="border mt-2"
-                onChange={(e) =>
-                  updateStatus(p._id, e.target.value)
-                }
-              >
-                <option>Pending</option>
-                <option>In Progress</option>
-                <option>Completed</option>
-              </select>
-            )}
-          </div>
-        ))
+              <div className="mt-4 flex flex-wrap gap-2">
+                {user.role === "admin" && (
+                  <>
+                    <button
+                      onClick={() => assignEmployee(p._id)}
+                      className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
+                    >
+                      Assign Employee
+                    </button>
+
+                    {p.status === "Pending Approval" && (
+                      <button
+                        onClick={() => approveProject(p._id)}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+                      >
+                        Approve
+                      </button>
+                    )}
+                  </>
+                )}
+
+                {user.role === "employee" && (
+                  <select
+                    className="border rounded px-2 py-1"
+                    onChange={(e) =>
+                      updateStatus(p._id, e.target.value)
+                    }
+                  >
+                    <option>Pending</option>
+                    <option>In Progress</option>
+                    <option>Completed</option>
+                  </select>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </MainLayout>
   );
