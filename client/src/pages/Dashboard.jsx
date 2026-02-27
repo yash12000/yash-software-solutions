@@ -1,10 +1,18 @@
 import { useEffect, useState } from "react";
 import { API } from "../services/api";
 import MainLayout from "../layout/MainLayout";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const user = JSON.parse(localStorage.getItem("user"));
   const [projects, setProjects] = useState([]);
+  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    window.location.href = "/";
+  };
 
   const fetchProjects = async () => {
     try {
@@ -78,29 +86,95 @@ export default function Dashboard() {
 
   return (
     <MainLayout>
-      <h1 className="text-3xl font-bold mb-6">
-        {user.role.toUpperCase()} DASHBOARD
-      </h1>
+      <div className="flex justify-between items-center bg-white px-6 py-4 shadow sticky top-0 z-50 mb-6">
+        <h1 className="text-xl font-semibold">
+          {user.role.toUpperCase()} Dashboard
+        </h1>
 
-      <div className="mb-6 flex gap-3">
+        <button
+          onClick={logout}
+          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+        >
+          Logout
+        </button>
+      </div>
+
+      <div className="mb-6 flex flex-wrap gap-3">
         {user.role === "admin" && (
-          <button
-            onClick={createProject}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow"
-          >
-            + Create Project
-          </button>
+          <>
+            <button
+              onClick={() => navigate("/users")}
+              className="bg-gray-800 text-white px-4 py-2 rounded"
+            >
+              Manage Users
+            </button>
+
+            <button
+              onClick={() => navigate("/messages")}
+              className="bg-purple-600 text-white px-4 py-2 rounded"
+            >
+              Messages
+            </button>
+
+            <button
+              onClick={createProject}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow"
+            >
+              + Create Project
+            </button>
+          </>
         )}
 
         {user.role === "client" && (
+          <>
+            <button
+              onClick={requestService}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg shadow"
+            >
+              Request Service
+            </button>
+
+            <button
+              onClick={() => navigate("/messages")}
+              className="bg-gray-800 text-white px-4 py-2 rounded"
+            >
+              Messages
+            </button>
+          </>
+        )}
+
+        {user.role === "employee" && (
           <button
-            onClick={requestService}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg shadow"
+            onClick={() => navigate("/messages")}
+            className="bg-gray-800 text-white px-4 py-2 rounded"
           >
-            Request Service
+            Messages
           </button>
         )}
       </div>
+
+      {user.role === "admin" && (
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="bg-white p-4 rounded shadow text-center">
+            <h2 className="text-lg font-semibold">Projects</h2>
+            <p className="text-2xl">{projects.length}</p>
+          </div>
+
+          <div className="bg-white p-4 rounded shadow text-center">
+            <h2 className="text-lg font-semibold">Employees</h2>
+            <p className="text-2xl">
+              {projects.flatMap((p) => p.employees || []).length}
+            </p>
+          </div>
+
+          <div className="bg-white p-4 rounded shadow text-center">
+            <h2 className="text-lg font-semibold">Clients</h2>
+            <p className="text-2xl">
+              {projects.filter((p) => p.client).length}
+            </p>
+          </div>
+        </div>
+      )}
 
       {filteredProjects.length === 0 ? (
         <p className="text-gray-500">No projects found</p>

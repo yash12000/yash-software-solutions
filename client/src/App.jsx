@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Users from "./pages/Users";
+import Messages from "./pages/Messages";
 
 export default function App() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -10,10 +12,11 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Login />} />
 
-        <Route
-          path="/dashboard"
-          element={user ? <Dashboard /> : <Login />}
-        />
+        {user && <Route path="/dashboard" element={<Dashboard />} />}
+        {user?.role === "admin" && (
+          <Route path="/users" element={<Users />} />
+        )}
+        {user && <Route path="/messages" element={<Messages />} />}
       </Routes>
     </BrowserRouter>
   );
