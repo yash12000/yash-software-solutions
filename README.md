@@ -13,6 +13,7 @@ This application allows Admins, Employees, and Clients to manage projects, commu
 ## 🌐 Live Links
 
 Frontend: https://yash-software-solutions.vercel.app/ 
+
 Backend: https://yash-software-solutions.onrender.com 
 
 ---
@@ -75,10 +76,13 @@ Employee → Updates Status
 ---
 
 ## 📂 Project Structure
+
 yash-software-solutions/
 │
 ├── client/ # React Frontend
+
 ├── server/ # Node Backend
+
 ├── README.md
 
 ---
@@ -87,6 +91,7 @@ yash-software-solutions/
 
 ### 1️⃣ Clone Repository
 git clone https://github.com/yash12000/yash-software-solutions
+
 cd yash-software-solutions
 
 
@@ -96,6 +101,7 @@ cd yash-software-solutions
 
 
 cd server
+
 npm install
 
 
@@ -119,7 +125,9 @@ npm run dev
 
 
 cd client
+
 npm install
+
 npm run dev
 
 
