@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { API } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const navigate = useNavigate();
+
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -18,13 +21,14 @@ export default function Login() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      alert("Login success");
+      alert("Login success ✅");
 
-      window.location.href = "/dashboard";
+      navigate("/dashboard");
+
     } catch (err) {
       console.log("Error:", err.response?.data || err.message);
 
-      alert(err.response?.data || "Login failed");
+      alert(err.response?.data?.msg || "Login failed ❌");
     }
   };
 
@@ -36,7 +40,9 @@ export default function Login() {
         type="email"
         placeholder="Email"
         value={data.email}
-        onChange={(e) => setData({ ...data, email: e.target.value })}
+        onChange={(e) =>
+          setData({ ...data, email: e.target.value })
+        }
       />
 
       <br />
@@ -46,7 +52,9 @@ export default function Login() {
         type="password"
         placeholder="Password"
         value={data.password}
-        onChange={(e) => setData({ ...data, password: e.target.value })}
+        onChange={(e) =>
+          setData({ ...data, password: e.target.value })
+        }
       />
 
       <br />

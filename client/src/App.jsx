@@ -12,11 +12,20 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Login />} />
 
-        {user && <Route path="/dashboard" element={<Dashboard />} />}
-        {user?.role === "admin" && (
-          <Route path="/users" element={<Users />} />
-        )}
-        {user && <Route path="/messages" element={<Messages />} />}
+        <Route
+          path="/dashboard"
+          element={user ? <Dashboard /> : <Login />}
+        />
+
+        <Route
+          path="/users"
+          element={user?.role === "admin" ? <Users /> : <Login />}
+        />
+
+        <Route
+          path="/messages"
+          element={user ? <Messages /> : <Login />}
+        />
       </Routes>
     </BrowserRouter>
   );
